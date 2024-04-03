@@ -28,11 +28,12 @@ This repository contains a Vue.js application developed by Kgosi Motlogelwa. The
 
 ## Live Deployment
 
-The application is also live at [http://abs.com](http://abs.com). You can access it directly in your browser.
+The application is also live at [https://vue-app-kgosi.vercel.app/](https://vue-app-kgosi.vercel.app/). Note that CORS issues don't allow for API calls on this URL and you will need to run the app locally for it to work
 
-
-For inquiries or further information, please contact Kgosi Motlogelwa at [kgosi.om@gmail.com].
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+For inquiries or further information, please contact Kgosi Motlogelwa at [kgosi.om@gmail.com].
