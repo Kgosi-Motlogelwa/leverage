@@ -21,8 +21,8 @@
       </div>
 
       <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        <input type="file" accept="image/*" @change="handleImageUpload" style="margin-right: 10px; opacity: 0; position: absolute; width: 20px;">
-        <label for="fileInput" style="cursor: pointer;">
+        <label for="fileInput" style="cursor: pointer; display: inline-block;">
+          <input id="fileInput" type="file" accept="image/*" @change="handleImageUpload" style="display: none;">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
             <path d="M16 3v6h5m-3.293 9.293a1 1 0 0 1-1.414 0L11 10.414V15a1 1 0 0 1-2 0V10.414L5.707 12.707a1 1 0 0 1-1.414-1.414l5-5a1 1 0 0 1 1.414 0l5 5a1 1 0 0 1 0 1.414z"></path>
             <path d="M12 19v3"></path>
