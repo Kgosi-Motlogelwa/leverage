@@ -28,7 +28,7 @@ This repository contains a Vue.js application developed by Kgosi Motlogelwa. The
 
 ## Live Deployment
 
-The application is also live at [https://vue-app-kgosi.vercel.app/](https://vue-app-kgosi.vercel.app/). Note that CORS issues don't allow for API calls on this URL and you will need to run the app locally for it to work
+The application is also live at [https://vue-app-kgosi.vercel.app/](https://vue-app-kgosi.vercel.app/). Note that CORS issues don't allow for API calls on this URL and you will need to run the app locally for it to work.
 
 
 ## License
