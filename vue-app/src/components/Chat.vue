@@ -72,7 +72,7 @@ export default {
       const requestBody = {
         model: this.model,
         stream: false,
-        messages: messagesToSend,
+        messages: this.conversation,
       };
 
       try {
@@ -153,6 +153,7 @@ export default {
     cursor: pointer;
     margin-top: 10px;
     flex-grow: 1;
+    max-width: 150px;
 }
 
 @media (min-width: 500px) {
