@@ -75,6 +75,3 @@ To utilize the API endpoints, follow these steps:
 
 This application was created by Kgosi Motlogelwa for a coding assessment.
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
