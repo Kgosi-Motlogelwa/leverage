@@ -6,7 +6,7 @@
     <!-- Pop-up -->
     <div v-if="showPopUp" class="popup" style="position: fixed; bottom: 70px; right: 20px; background-color: white; padding: 20px; border-radius: 15px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); max-width: 75%;">
       <!-- Your existing content here -->
-      <div style="height: 300px; overflow-y: scroll; margin-bottom: 10px; display: flex; flex-direction: column;">
+      <div ref="conversationContainer" style="height: 300px; overflow-y: scroll; margin-bottom: 10px; display: flex; flex-direction: column;">
         <div v-for="(message, index) in conversation" :key="index" style="padding: 20px; margin: 20px; width: fit-content; max-width: 70%; border-radius: 40px;" :style="{ backgroundColor: message.role === 'user' ? '#7CB644' : '#f0f0f0', textAlign: 'left', color: 'black', alignSelf: message.role === 'user' ? 'flex-start' : 'flex-end' }">
           {{ message.content }}
           <br>
@@ -24,10 +24,8 @@
           <div class="input-wrapper">
               <label for="fileInput" class="file-input-label">
                   <input id="fileInput" type="file" accept="image/*" @change="handleImageUpload" style="display: none;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
-                      <path d="M16 3v6h5m-3.293 9.293a1 1 0 0 1-1.414 0L11 10.414V15a1 1 0 0 1-2 0V10.414L5.707 12.707a1 1 0 0 1-1.414-1.414l5-5a1 1 0 0 1 1.414 0l5 5a1 1 0 0 1 0 1.414z"></path>
-                      <path d="M12 19v3"></path>
-                  </svg>
+                  <img v-if="inputImage" :src="inputImage" alt="Uploaded Image" style="width: 24px; height: 24px;">
+                  <img v-else src="../assets/add_image.png" alt="Add Image" style="width: 24px; height: 24px;">
               </label>
               <input type="text" v-model="inputMessage" class="message-input">
           </div>
@@ -74,6 +72,9 @@ export default {
         stream: false,
         messages: this.conversation,
       };
+      this.$nextTick(() => {
+            this.$refs.conversationContainer.scrollTop = this.$refs.conversationContainer.scrollHeight;
+        });
 
       try {
         console.log("RequestBody: ", requestBody)
@@ -84,6 +85,9 @@ export default {
         const botMessage = response.data.message;
         console.log("response: ", response)
         this.conversation.push(botMessage);
+        this.$nextTick(() => {
+            this.$refs.conversationContainer.scrollTop = this.$refs.conversationContainer.scrollHeight;
+        });
       } catch (error) {
         console.error('Error:', error);
       }
@@ -140,6 +144,7 @@ export default {
     border-radius: 15px;
     font-size: 16px;
     line-height: 1.5;
+    margin-left: 10px;
 }
 
 .send-button {
@@ -151,14 +156,20 @@ export default {
     font-size: 16px;
     line-height: 1.5;
     cursor: pointer;
-    margin-top: 10px;
-    flex-grow: 1;
-    max-width: 150px;
 }
 
 @media (min-width: 500px) {
     .message-input {
         margin-right: 10px;
+    }
+    .send-button {
+        max-width: 150px;
+    }
+}
+@media (max-width: 500px) {
+    .send-button {
+        width: 100%;
+        margin-top: 10px;
     }
 }
 
