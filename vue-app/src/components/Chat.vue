@@ -27,7 +27,7 @@
                   <img v-if="inputImage" :src="inputImage" alt="Uploaded Image" style="width: 24px; height: 24px;">
                   <img v-else src="../assets/add_image.png" alt="Add Image" style="width: 24px; height: 24px;">
               </label>
-              <input type="text" v-model="inputMessage" class="message-input">
+              <input type="text" v-model="inputMessage" class="message-input" @keydown.enter="sendMessageOnEnter">
           </div>
           <button @click="handleSendMessage" class="send-button">Send</button>
       </div>
@@ -58,7 +58,7 @@ export default {
       // Set loading state to true before API call
       const currentUserMessage = { role: 'user', content: this.inputMessage, image: this.inputImage }; // Include uploaded image in message object
       const previousMessage = this.conversation.length > 0 ? this.conversation[this.conversation.length - 1] : null;
-
+      this.inputMessage = '';
       const messagesToSend = [];
       if (previousMessage) {
         messagesToSend.push(previousMessage);
@@ -92,7 +92,7 @@ export default {
         console.error('Error:', error);
       }
 
-      this.inputMessage = '';
+      
       this.loading = false; // Set loading state to false after API call
       this.inputImage = ''; // Clear uploaded image after sending message
     },
@@ -110,9 +110,18 @@ export default {
     },
     togglePopUp() {
       this.showPopUp = !this.showPopUp;
+    },
+    sendMessageOnEnter(event) {
+        if (event.key === 'Enter' && this.inputMessage.trim() !== '') {
+            this.handleSendMessage();
+        }
     }
   }
+
+  
 };
+
+
 </script>
 
 <style>
