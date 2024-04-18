@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Models\PollingDistricts;
+use App\Models\Constituencies;
 use App\Http\Requests\StorePollingDistrictsRequest;
 use App\Http\Requests\UpdatePollingDistrictsRequest;
 use App\Http\Controllers\Controller;
@@ -19,14 +20,27 @@ class PollingDistrictsController extends Controller
         return PollingDistricts::all();
     }
 
+    // public function getByConstituencyId($constituencyId)
+    // {
+    //     // Fetch polling districts based on the provided constituency ID
+    //     $pollingDistricts = PollingDistricts::where('constituencies_id', $constituencyId)->get();
+
+    //     // Return the polling districts as JSON response
+    //     return response()->json($pollingDistricts);
+    // }
+
     public function getByConstituencyId($constituencyId)
     {
-        // Fetch polling districts based on the provided constituency ID
-        $pollingDistricts = PollingDistricts::where('constituencies_id', $constituencyId)->get();
+        // Eager load polling districts associated with the constituency
+        $constituency = Constituencies::with('polling_districts')->findOrFail($constituencyId);
+
+        // Retrieve polling districts from the loaded relationship
+        $pollingDistricts = $constituency->polling_districts;
 
         // Return the polling districts as JSON response
         return response()->json($pollingDistricts);
     }
+
 
     /**
      * Show the form for creating a new resource.

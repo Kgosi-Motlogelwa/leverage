@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Models\PollingStations;
+use App\Models\PollingDistricts;
 use App\Http\Requests\StorePollingStationsRequest;
 use App\Http\Requests\UpdatePollingStationsRequest;
 use App\Http\Controllers\Controller;
-
 class PollingStationsController extends Controller
 {
     /**
@@ -16,7 +16,20 @@ class PollingStationsController extends Controller
      */
     public function index()
     {
-        return PollingStations::all();
+        $pollingStations = PollingStations::paginate(10);
+
+        return response()->json([
+            'data' => $pollingStations->items(),
+            'meta' => [
+                'current_page' => $pollingStations->currentPage(),
+                'per_page' => $pollingStations->perPage(),
+                'total' => $pollingStations->total(),
+            ],
+            'links' => [
+                'next' => $pollingStations->nextPageUrl(),
+                'prev' => $pollingStations->previousPageUrl(),
+            ],
+        ]);
     }
 
     public function getByPollingDistrictsId($pollingDistrictsId)
@@ -27,6 +40,15 @@ class PollingStationsController extends Controller
         // Return the polling districts as JSON response
         return response()->json($pollingStations);
     }
+
+    public function getPollingStationsByPollingDistrict($pollingDistrictId)
+{
+    // Fetch the polling district along with its polling stations using eager loading
+    $pollingDistrict = PollingDistricts::with('polling_stations')->findOrFail($pollingDistrictId);
+
+    // Return the polling district with its polling stations
+    return response()->json($pollingDistrict);
+}
 
     /**
      * Show the form for creating a new resource.

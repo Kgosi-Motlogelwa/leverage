@@ -6,7 +6,11 @@ use App\Http\Controllers\API\V1\PollingStationsController;
 use App\Models\Constituencies;
 use App\Models\PollingDistricts;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,22 +23,67 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+function generateRandomCredentials() {
+    // Generate a random email address
+    $email = 'user' . rand(1, 1000) . '@example.com';
 
-Route::group(['prefix' => 'v1', 'namespace'=>"App\Http\Controllers\API\V1"], function() {
+    // Generate a random password (8 characters)
+    $password = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)), 0, 8);
+
+    return [
+        'email' => $email,
+        'password' => $password,
+    ];
+}
+
+
+
+Route::group(['prefix' => 'v1', 'namespace' => "App\Http\Controllers\API\V1"], function () {
+    
+    // Normal CRUD operation
     Route::apiResource('constituencies', ConstituenciesController::class);
-    Route::apiResource('pollingDistricts', PollingDistrictsController::class);
-    Route::apiResource('pollingStations', PollingStationsController::class);
+    // Caching 
+    Route::get('pollingDistricts', function () {
+        // Fetch constituencies from cache if available
+        $pollingDistricts = Cache::remember('pollingDistricts', 3600, function () {
+            return PollingDistricts::all();
+        });
+    
+        return response()->json($pollingDistricts);
+    });
 
+    // Paginated Route pollingStations by specifying 'index' where pagination
+    Route::get('pollingStations', [PollingStationsController::class, 'index']);
+
+
+    
     Route::get('constituencies/{constituencyId}/pollingDistricts', [PollingDistrictsController::class, 'getByConstituencyId']);
+    Route::get('auth', function () {
+        $credentials = generateRandomCredentials();
+    
+        // Attempt to authenticate the user
+        // if (!Auth::attempt($credentials)) {
+            // If authentication fails, create a new user
+            $user = new \App\Models\User();
+            $user->name = 'Admin';
+            $user->email = $credentials['email'];
+            $user->password = Hash::make($credentials['password']);
+            $user->save();
+    
+            // Generate a token for the user
+            $token = $user->createToken('token')->plainTextToken;
+    
+            // Return the token in the response
+            return ['token' => $token];
+        // }
+    });
+  
+    Route::middleware('auth:sanctum')->get('pollingDistricts/{pollingDistrictId}/pollingStations', [PollingStationsController::class, 'getByPollingDistrictsId']);
+    
+    
 });
 
-Route::group(['prefix' => 'v1', 'namespace'=>"App\Http\Controllers\API\V1", 'middleware' => 'auth:sanctum'], function() {
-    // Custom routes
-    Route::get('pollingDistricts/{pollingDistrictsId}/pollingStations', [PollingStationsController::class, 'getByPollingDistrictsId']);
-});
+
 
 
 //API/V1/Constituencies
